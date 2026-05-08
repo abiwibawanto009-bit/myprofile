@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard CMS | Abi.dev</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="nav-brand" style="font-size: 1.75rem;">Abi.CMS</div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="sidebar-link active">
+                <span>📝</span> Kelola Artikel
+            </a>
+            <a href="index.html" class="sidebar-link">
+                <span>🌍</span> Lihat Website
+            </a>
+            <div style="flex: 1;"></div>
+            <a href="#" id="logoutBtn" class="sidebar-link" style="color: var(--danger);">
+                <span>🚪</span> Keluar
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main fade-up">
+        <header class="dashboard-header">
+            <div>
+                <h1 style="font-size: 2rem; margin-bottom: 0.25rem;">Dashboard</h1>
+                <p style="color: var(--muted); margin: 0;">Selamat datang kembali, Admin. Kelola konten portofolio Anda di sini.</p>
+            </div>
+            <button id="themeToggle" class="theme-toggle-btn" aria-label="Ganti Tema">☀️</button>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Add Article Form -->
+            <section style="padding: 0; max-width: 100%;">
+                <div class="glass" style="padding: 2rem;">
+                    <h3>Tambah Artikel / Goal Baru</h3>
+                    <form id="formArtikel" style="margin-top: 1.5rem;">
+                        <div class="form-group">
+                            <label for="judul">Judul Artikel</label>
+                            <input type="text" id="judul" placeholder="cth., Perjalanan Saya di Web Dev" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="isi">Konten</label>
+                            <textarea id="isi" placeholder="Tulis konten artikel Anda di sini..." rows="6" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gambar">Gambar Sampul (Opsional)</label>
+                            <input type="file" id="gambar" accept="image/*" style="padding: 0.5rem; background: transparent; border: 1px dashed var(--border);">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Terbitkan Artikel</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Article List -->
+            <section style="padding: 0; max-width: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>Artikel yang Diterbitkan</h3>
+                </div>
+                <div id="listArtikel" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Content will be injected by JS -->
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

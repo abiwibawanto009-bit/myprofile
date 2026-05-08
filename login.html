@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login CMS | Abi.dev</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+<canvas id="bg-canvas"></canvas>
+
+<nav class="glass-nav" style="padding: 1rem 5%;">
+    <div class="nav-brand">Abi.dev</div>
+    <ul class="nav-links">
+        <li><a href="index.html">Kembali ke Beranda</a></li>
+    </ul>
+</nav>
+
+<div class="login-container fade-up">
+    <div class="glass login-card">
+        <div class="login-header">
+            <h2 style="margin-bottom: 0.5rem;">Selamat Datang Kembali</h2>
+            <p style="color: var(--muted); font-size: 0.9rem;">Silakan login untuk mengakses Dashboard CMS.</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Masukkan username Anda" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Masukkan password Anda" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Masuk ke Dashboard</button>
+        </form>
+        
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center;">
+            <p style="font-size: 0.85rem; margin-bottom: 0.25rem;">Kredensial Default:</p>
+            <p style="font-size: 0.85rem; font-family: monospace; color: var(--accent);">Username: admin<br>Password: password123</p>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

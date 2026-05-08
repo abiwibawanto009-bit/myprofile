@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Portofolio Abi Wibawanto - Web Developer & UI/UX Enthusiast. Jelajahi proyek dan artikel saya.">
+    <meta name="keywords" content="Portofolio, Web Developer, UI/UX, HTML, CSS, JavaScript, Frontend Developer">
+    <meta name="author" content="Abi Wibawanto">
+    <title>Abi Wibawanto | Portofolio Premium</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="glass-nav">
+        <div class="nav-brand">Abi.dev</div>
+        <ul class="nav-links">
+            <li><a href="#home">Beranda</a></li>
+            <li><a href="#about">Tentang</a></li>
+            <li><a href="#hobi">Hobi</a></li>
+            <li><a href="#goals">Artikel</a></li>
+            <li><a href="#contact">Kontak</a></li>
+            <li><a href="login.html" id="navCmsLink">Login CMS</a></li>
+            <li><a href="#" id="logoutBtn" style="display:none;">Keluar</a></li>
+        </ul>
+        <button id="themeToggle" class="theme-toggle-btn" aria-label="Ganti Tema">☀️</button>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content fade-up">
+            <span class="eyebrow">Selamat datang di portofolio saya</span>
+            <h1 class="hero-title">Halo, Saya <br><span class="typing-container"><span id="typingEffect"
+                        class="typing-text"></span></span></h1>
+            <p class="hero-subtitle">Saya merancang dan membangun pengalaman web yang indah, responsif, dan berpusat
+                pada pengguna. Jelajahi proyek dan pemikiran terbaru saya di bawah ini.</p>
+            <div class="hero-actions">
+                <a href="#hobi" class="btn btn-primary">Lihat Karya Saya</a>
+                <a href="#contact" class="btn btn-secondary">Hubungi Saya</a>
+            </div>
+        </div>
+        <div class="hero-media fade-up">
+            <div class="hero-image-wrapper">
+                <img src="Myphoto.jpeg" alt="Abi Wibawanto" class="hero-image" loading="lazy"
+                    onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=800&q=80'">
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 class="fade-up">Tentang Saya</h2>
+        <div class="grid">
+            <div class="card glass fade-up">
+                <h3>Web Developer</h3>
+                <p>Bersemangat dalam membuat website modern dan responsif menggunakan HTML, CSS, dan framework
+                    JavaScript modern untuk memberikan pengalaman pengguna yang mulus.</p>
+            </div>
+            <div class="card glass fade-up">
+                <h3>Mahasiswa Informatika</h3>
+                <p>Terus belajar dan mengeksplorasi teknologi baru, algoritma, dan pola desain untuk membangun aplikasi
+                    yang kuat dan dapat diskalakan.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="hobi">
+        <h2 class="fade-up">Hobi Saya</h2>
+        <div class="grid">
+            <div class="card glass fade-up" style="text-align: center; justify-content: center; align-items: center;">
+                <h3 style="font-size: 2rem; margin-bottom: 0.5rem">💻</h3>
+                <h3 style="margin-bottom:0">Koding</h3>
+            </div>
+            <div class="card glass fade-up" style="text-align: center; justify-content: center; align-items: center;">
+                <h3 style="font-size: 2rem; margin-bottom: 0.5rem">🎨</h3>
+                <h3 style="margin-bottom:0">Desain</h3>
+            </div>
+            <div class="card glass fade-up" style="text-align: center; justify-content: center; align-items: center;">
+                <h3 style="font-size: 2rem; margin-bottom: 0.5rem">🎮</h3>
+                <h3 style="margin-bottom:0">Bermain Game</h3>
+            </div>
+            <div class="card glass fade-up" style="text-align: center; justify-content: center; align-items: center;">
+                <h3 style="font-size: 2rem; margin-bottom: 0.5rem">📸</h3>
+                <h3 style="margin-bottom:0">Fotografi</h3>
+            </div>
+        </div>
+    </section>
+
+    <section id="goals">
+        <h2 class="fade-up">Artikel & Goals Terbaru</h2>
+        <div id="blogArtikel" class="grid">
+            <!-- Content will be injected by JS -->
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="fade-up">Hubungi Saya</h2>
+        <div class="grid" style="grid-template-columns: 1fr 1.5fr;">
+            <div class="glass fade-up" style="padding: 2.5rem; border-radius: 24px;">
+                <h3>Informasi Kontak</h3>
+                <p>Jangan ragu untuk menghubungi saya untuk kolaborasi atau sekadar mengobrol santai.</p>
+                <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <a href="mailto:abiwibawanto009@gmail.com"
+                        style="display: flex; align-items: center; gap: 1rem; color: var(--text);">
+                        <span style="font-size: 1.5rem">📧</span>
+                        <abi class="abiwibawanto009"></abi>Email
+                    </a>
+                    <a href="https://www.instagram.com/abiabuabu_?igsh=YnFmcGxpdXltNXkw" target="_blank"
+                        style="display: flex; align-items: center; gap: 1rem; color: var(--text);">
+                        <span style="font-size: 1.5rem">📷</span> Instagram
+                    </a>
+                    <a href="https://github.com/abiwibawanto009-bit" target="_blank"
+                        style="display: flex; align-items: center; gap: 1rem; color: var(--text);">
+                        <span style="font-size: 1.5rem">💻</span> GitHub
+                    </a>
+                    <a href="https://www.linkedin.com/in/abi-wibawanto-432933365?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+                        target="_blank" style="display: flex; align-items: center; gap: 1rem; color: var(--text);">
+                        <span style="font-size: 1.5rem">💼</span> LinkedIn
+                    </a>
+                </div>
+            </div>
+            <div class="glass fade-up" style="padding: 2.5rem; border-radius: 24px;">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="contactName">Nama Anda</label>
+                        <input type="text" id="contactName" placeholder="Budi Santoso" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Email Anda</label>
+                        <input type="email" id="contactEmail" placeholder="budi@contoh.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactMessage">Pesan</label>
+                        <textarea id="contactMessage" placeholder="Ada yang bisa saya bantu?" rows="5"
+                            required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%">Kirim Pesan</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content" style="max-width: 800px; margin: 0 auto; margin-bottom: 2rem;">
+            <h3 style="color: var(--text)">Abi.dev</h3>
+            <p>Membangun pengalaman digital yang memadukan estetika dan performa.</p>
+        </div>
+        <p>&copy; 2026 Abi Wibawanto. Hak Cipta Dilindungi.</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
