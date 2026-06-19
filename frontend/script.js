@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Self-healing patch untuk unregister Service Worker lama yang rusak (ERR_FAILED)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+            if (registrations.length > 0 && !localStorage.getItem('sw_fixed_v2')) {
+                for (let reg of registrations) {
+                    reg.unregister();
+                }
+                localStorage.setItem('sw_fixed_v2', 'true');
+                console.log('Unregister service worker lama sukses. Memuat ulang...');
+                window.location.reload();
+            }
+        });
+    }
+
     // Basic Routing/Protection
     const currentPage = window.location.pathname.split("/").pop();
     const isLogin = sessionStorage.getItem("isLogin") === "true";
