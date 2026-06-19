@@ -143,8 +143,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast(data.message || "Username atau Password salah!", "error");
                 }
             } catch (error) {
-                console.error(error);
-                showToast("Gagal menghubungi server backend!", "error");
+                console.warn("Backend offline, menggunakan otentikasi localStorage");
+                if (username === "admin" && password === "password123") {
+                    sessionStorage.setItem("isLogin", "true");
+                    showToast("Login berhasil! (Mode Demo Offline)", "success");
+                    setTimeout(() => window.location.href = "index.html", 1000);
+                } else {
+                    showToast("Username atau Password salah!", "error");
+                }
             }
         });
     }
@@ -229,8 +235,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast(data.message || "Gagal menyimpan artikel.", "error");
             }
         } catch (error) {
-            console.error(error);
-            showToast("Gagal menghubungi server!", "error");
+            console.warn("Backend offline, menyimpan artikel ke localStorage");
+            let localArticles = JSON.parse(localStorage.getItem('articles')) || [];
+            if (isEdit) {
+                localArticles = localArticles.map(item => {
+                    if (item.id == editingId) {
+                        return { ...item, judul: payload.judul, isi: payload.isi, gambar: payload.gambar || item.gambar };
+                    }
+                    return item;
+                });
+                showToast("Artikel berhasil diperbarui! (Mode Demo Offline)", "success");
+            } else {
+                const newId = localArticles.length > 0 ? Math.max(...localArticles.map(a => a.id)) + 1 : 1;
+                localArticles.unshift({
+                    id: newId,
+                    judul: payload.judul,
+                    isi: payload.isi,
+                    gambar: payload.gambar || '',
+                    tanggal: new Date().toLocaleDateString('id-ID')
+                });
+                showToast("Artikel berhasil ditambahkan! (Mode Demo Offline)", "success");
+            }
+            localStorage.setItem('articles', JSON.stringify(localArticles));
+            resetForm();
+            loadArticlesCMS();
+            triggerPushNotification(
+                isEdit ? "Artikel Diperbarui! 📝" : "Artikel Diterbitkan! 🎉",
+                `Judul: "${payload.judul}" disimpan secara lokal.`
+            );
         }
     }
 
@@ -254,8 +286,20 @@ document.addEventListener('DOMContentLoaded', () => {
             
             document.getElementById("formArtikel").scrollIntoView({ behavior: 'smooth' });
         } catch (error) {
-            console.error(error);
-            showToast("Terjadi kesalahan saat memuat data edit!", "error");
+            console.warn("Backend offline, memuat data edit dari localStorage");
+            const localArticles = JSON.parse(localStorage.getItem('articles')) || [];
+            const item = localArticles.find(a => a.id == id);
+            if (item) {
+                document.getElementById("judul").value = item.judul;
+                document.getElementById("isi").value = item.isi;
+                editingId = id;
+                document.getElementById("formTitle").textContent = "Edit Artikel";
+                document.getElementById("submitBtn").textContent = "Simpan Perubahan";
+                document.getElementById("cancelBtn").style.display = "block";
+                document.getElementById("formArtikel").scrollIntoView({ behavior: 'smooth' });
+            } else {
+                showToast("Terjadi kesalahan saat memuat data edit!", "error");
+            }
         }
     };
 
@@ -298,8 +342,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast(data.message || "Gagal menghapus artikel", "error");
                 }
             } catch (error) {
-                console.error(error);
-                showToast("Gagal menghubungi server!", "error");
+                console.warn("Backend offline, menghapus artikel dari localStorage");
+                let localArticles = JSON.parse(localStorage.getItem('articles')) || [];
+                localArticles = localArticles.filter(item => item.id != id);
+                localStorage.setItem('articles', JSON.stringify(localArticles));
+                showToast("Artikel berhasil dihapus! (Mode Demo Offline)", "success");
+                loadArticlesCMS();
+                triggerPushNotification("Artikel Dihapus! 🗑️", "Satu artikel telah dihapus secara lokal.");
             }
         }
     };
@@ -313,34 +362,43 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(API_URL);
             const data = await response.json();
-
-            if (data.length === 0) {
-                listArtikel.innerHTML = `<p class="glass" style="padding:2rem; text-align:center; color:var(--muted)">Belum ada artikel.</p>`;
-            } else {
-                data.forEach((item) => {
-                    listArtikel.innerHTML += `
-                        <div class="glass article-card fade-up active">
-                            ${item.gambar ? `<img src="${item.gambar}" alt="${item.judul}" class="article-image">` : ""}
-                            <div class="article-content">
-                                <h3>${item.judul}</h3>
-                                <p style="font-size: 0.8rem; color: var(--accent); margin-bottom: 0.5rem">${item.tanggal || ''}</p>
-                                <p>${item.isi.substring(0, 100)}...</p>
-                                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                                    <button onclick="editArtikel(${item.id})" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Edit</button>
-                                    <button onclick="hapusArtikel(${item.id})" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;">Hapus</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
+            renderCMSArticles(data);
         } catch (error) {
-            console.error(error);
-            listArtikel.innerHTML = `<p class="glass" style="padding:2rem; text-align:center; color:var(--danger)">Gagal memuat artikel dari server.</p>`;
+            console.warn("Backend offline, memuat data CMS dari localStorage");
+            let localArticles = JSON.parse(localStorage.getItem('articles')) || [];
+            if (localArticles.length === 0) {
+                localArticles = seedArticles();
+            }
+            renderCMSArticles(localArticles);
         }
     }
 
-    // Render Articles in Homepage (Blog Section)
+    function renderCMSArticles(data) {
+        const listArtikel = document.getElementById("listArtikel");
+        if (!listArtikel) return;
+        listArtikel.innerHTML = "";
+        if (data.length === 0) {
+            listArtikel.innerHTML = `<p class="glass" style="padding:2rem; text-align:center; color:var(--muted)">Belum ada artikel.</p>`;
+        } else {
+            data.forEach((item) => {
+                listArtikel.innerHTML += `
+                    <div class="glass article-card fade-up active">
+                        ${item.gambar ? `<img src="${item.gambar}" alt="${item.judul}" class="article-image">` : ""}
+                        <div class="article-content">
+                            <h3>${item.judul}</h3>
+                            <p style="font-size: 0.8rem; color: var(--accent); margin-bottom: 0.5rem">${item.tanggal || ''}</p>
+                            <p>${item.isi.substring(0, 100)}...</p>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                                <button onclick="editArtikel(${item.id})" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Edit</button>
+                                <button onclick="hapusArtikel(${item.id})" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;">Hapus</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    }
+
     async function loadArticlesHome() {
         const blogArtikel = document.getElementById("blogArtikel");
         if (!blogArtikel) return;
@@ -349,27 +407,58 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(API_URL);
             const data = await response.json();
-
-            if (data.length === 0) {
-                blogArtikel.innerHTML = `<p class="glass" style="padding:2rem; text-align:center; color:var(--muted)">Belum ada artikel yang dipublikasikan.</p>`;
-            } else {
-                data.forEach((item) => {
-                    blogArtikel.innerHTML += `
-                        <div class="glass article-card fade-up active">
-                            ${item.gambar ? `<img src="${item.gambar}" alt="${item.judul}" class="article-image">` : ""}
-                            <div class="article-content">
-                                <h3>${item.judul}</h3>
-                                <p style="font-size: 0.8rem; color: var(--accent); margin-bottom: 0.5rem">${item.tanggal || ''}</p>
-                                <p>${item.isi}</p>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
+            renderHomeArticles(data);
         } catch (error) {
-            console.error(error);
-            blogArtikel.innerHTML = `<p class="glass" style="padding:2rem; text-align:center; color:var(--danger)">Gagal memuat artikel dari server.</p>`;
+            console.warn("Backend offline, memuat data Beranda dari localStorage");
+            let localArticles = JSON.parse(localStorage.getItem('articles')) || [];
+            if (localArticles.length === 0) {
+                localArticles = seedArticles();
+            }
+            renderHomeArticles(localArticles);
         }
+    }
+
+    function renderHomeArticles(data) {
+        const blogArtikel = document.getElementById("blogArtikel");
+        if (!blogArtikel) return;
+        blogArtikel.innerHTML = "";
+        if (data.length === 0) {
+            blogArtikel.innerHTML = `<p class="glass" style="padding:2rem; text-align:center; color:var(--muted)">Belum ada artikel yang dipublikasikan.</p>`;
+        } else {
+            data.forEach((item) => {
+                blogArtikel.innerHTML += `
+                    <div class="glass article-card fade-up active">
+                        ${item.gambar ? `<img src="${item.gambar}" alt="${item.judul}" class="article-image">` : ""}
+                        <div class="article-content">
+                            <h3>${item.judul}</h3>
+                            <p style="font-size: 0.8rem; color: var(--accent); margin-bottom: 0.5rem">${item.tanggal || ''}</p>
+                            <p>${item.isi}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    function seedArticles() {
+        const localArticles = [
+            {
+                id: 1,
+                judul: 'Belajar Dasar Web Development',
+                isi: 'Web development adalah proses membangun dan memelihara situs web. Ini adalah pekerjaan di balik layar yang membuat situs web terlihat hebat, bekerja dengan cepat, dan berkinerja baik dengan pengalaman pengguna yang mulus. Dalam artikel ini, kita akan mempelajari dasar-dasar HTML, CSS, dan JavaScript sebagai pilar utama pembuatan website modern.',
+                gambar: '',
+                tanggal: '30/05/2026'
+            },
+            {
+                id: 2,
+                judul: 'Pentingnya UI/UX di Era Digital',
+                isi: 'UI (User Interface) dan UX (User Experience) adalah dua elemen krusial dalam pembuatan produk digital. UI berfokus pada keindahan tampilan visual, sedangkan UX berfokus pada kenyamanan pengguna saat berinteraksi dengan produk tersebut. Kombinasi yang baik antara UI yang indah dan UX yang intuitif akan meningkatkan konversi serta kepuasan pengguna secara signifikan.',
+                gambar: '',
+                tanggal: '29/05/2026'
+            }
+        ];
+        localStorage.setItem('articles', JSON.stringify(localArticles));
+        return localArticles;
     }
 
     // Load initial articles
