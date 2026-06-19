@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard CMS | Abi.dev</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -37,14 +38,22 @@
                 <h1 style="font-size: 2rem; margin-bottom: 0.25rem;">Dashboard</h1>
                 <p style="color: var(--muted); margin: 0;">Selamat datang kembali, Admin. Kelola konten portofolio Anda di sini.</p>
             </div>
-            <button id="themeToggle" class="theme-toggle-btn" aria-label="Ganti Tema">☀️</button>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <button id="btnInstall" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem; border-radius: 20px; display: none; align-items: center; gap: 0.5rem;">
+                    <span>📥</span> Install App
+                </button>
+                <button id="btnNotifikasi" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem; border-radius: 20px; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🔔</span> Aktifkan Notifikasi Demo
+                </button>
+                <button id="themeToggle" class="theme-toggle-btn" aria-label="Ganti Tema">☀️</button>
+            </div>
         </header>
 
         <div class="dashboard-grid">
             <!-- Add Article Form -->
             <section style="padding: 0; max-width: 100%;">
                 <div class="glass" style="padding: 2rem;">
-                    <h3>Tambah Artikel / Goal Baru</h3>
+                    <h3 id="formTitle">Tambah Artikel / Goal Baru</h3>
                     <form id="formArtikel" style="margin-top: 1.5rem;">
                         <div class="form-group">
                             <label for="judul">Judul Artikel</label>
@@ -61,7 +70,10 @@
                             <input type="file" id="gambar" accept="image/*" style="padding: 0.5rem; background: transparent; border: 1px dashed var(--border);">
                         </div>
                         
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Terbitkan Artikel</button>
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="submit" id="submitBtn" class="btn btn-primary" style="flex: 2; width: 100%;">Terbitkan Artikel</button>
+                            <button type="button" id="cancelBtn" class="btn btn-secondary" style="display: none; flex: 1;">Batal</button>
+                        </div>
                     </form>
                 </div>
             </section>
