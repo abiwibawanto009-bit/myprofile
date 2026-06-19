@@ -17,7 +17,8 @@ const ASSETS = [
 self.addEventListener('install', (e) => {
     e.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(ASSETS);
+            // Kita bungkus addAll agar jika satu gagal, SW tetap bisa terpasang
+            return cache.addAll(ASSETS).catch(err => console.warn('Gagal cache beberapa aset:', err));
         }).then(() => self.skipWaiting())
     );
 });
@@ -37,22 +38,32 @@ self.addEventListener('activate', (e) => {
     );
 });
 
-// Fetch event (cache-first style for static assets)
+// Fetch event (cache-first fallback to network)
 self.addEventListener('fetch', (e) => {
-    // Skip API calls and non-GET requests
+    // Lewatkan request API dan non-GET
     if (!e.request.url.startsWith(self.location.origin) || e.request.method !== 'GET' || e.request.url.includes('/api/')) {
         return;
     }
+    
     e.respondWith(
         caches.match(e.request).then((cachedResponse) => {
             if (cachedResponse) {
                 return cachedResponse;
             }
             return fetch(e.request).then((networkResponse) => {
-                return caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(e.request, networkResponse.clone());
-                    return networkResponse;
-                });
+                // Cache aset yang baru dimuat secara dinamis jika valid
+                if (networkResponse && networkResponse.status === 200) {
+                    const responseClone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(e.request, responseClone);
+                    });
+                }
+                return networkResponse;
+            }).catch(() => {
+                // Fallback jika offline total dan tidak ada di cache
+                if (e.request.mode === 'navigate') {
+                    return caches.match('/index.html') || caches.match('/login.html');
+                }
             });
         })
     );
